@@ -8,8 +8,9 @@ public class Sign {
     @GeneratedValue
     private Long signId;
 
-    @Column(name = "student_id",nullable = false)
-    private Long studentId;
+    @JoinColumn(name = "student_id",nullable = false)
+    @OneToOne
+    private Student student;
 
     @Column(name = "sign_time",nullable = false)
     private Long signTime;
@@ -40,12 +41,12 @@ public class Sign {
         this.signId = signId;
     }
 
-    public Long getStudentId() {
-        return studentId;
+    public Student getStudent() {
+        return student;
     }
 
-    public void setStudentId(Long studentId) {
-        this.studentId = studentId;
+    public void setStudent(Student student) {
+        this.student = student;
     }
 
     public Long getSignTime() {
