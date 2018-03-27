@@ -24,17 +24,18 @@ public class SignAspect  {
     public void isLogin(JoinPoint joinPoint){
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-
+        String methoad = joinPoint.getSignature().getDeclaringTypeName() +"."+joinPoint.getSignature().getName();
         logger.info("url={}",request.getRequestURL());
         logger.info("method={}",request.getMethod());
         logger.info("ip={}",request.getRemoteAddr());
-        logger.info("class_method={}", joinPoint.getSignature().getDeclaringTypeName() +"."+joinPoint.getSignature().getName());
+        logger.info("class_method={}",methoad );
         logger.info("args={}",joinPoint.getArgs());
 
-        if(request.getParameter("uid")==null){
-            logger.info("需要先登录");
+        if(!methoad.equalsIgnoreCase("com.nelson.sign.controller.UserController.userLogin")){
+            if(request.getParameter("uid")==null){
+                logger.info("需要先登录");
+            }
         }
-        System.out.println("OK");
     }
 
     @After("log()")

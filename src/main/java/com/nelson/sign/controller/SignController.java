@@ -2,9 +2,12 @@ package com.nelson.sign.controller;
 
 import com.nelson.sign.entity.Course;
 import com.nelson.sign.entity.Sign;
+import com.nelson.sign.enums.ResultEnum;
+import com.nelson.sign.handle.SignException;
 import com.nelson.sign.service.CourseService;
 import com.nelson.sign.service.SignService;
 import com.nelson.sign.utils.Result;
+import com.nelson.sign.utils.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,7 +28,7 @@ public class SignController {
     private CourseService courseService;
 
     @RequestMapping("/sign")
-    public Result sign(@Valid Sign sign, HttpServletRequest request){
+    public Result<Sign> sign(@Valid Sign sign, HttpServletRequest request){
         //获取客户端IP
         String ip = request.getHeader("x-forwarded-for");
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
@@ -60,19 +63,14 @@ public class SignController {
             sign.setStatus(0);
         }
         lateTime = Math.abs(lateTime)/(1000*60);
-        Result result = new Result("OK");
         if(sign.getStatus()==1 && lateTime>30){
-            result.status = "无法签到,请在上课前30分钟内签到";
-            return result;
+            throw new SignException(ResultEnum.ERR_SIGN_EARLY);
         }else if (sign.getStatus()==0 && lateTime>30){
-            result.status = "由于您迟到时间过长,无法签到";
-            return result;
+            throw new SignException(ResultEnum.ERR_SIGN_LATE);
         }
 
         sign = this.signService.sign(sign);
-        result.resultMap.put("sign",sign);
-        result.resultMap.put("lateTime",lateTime);
-        return result;
+        return ResultUtil.success(sign);
     }
 
     /**
@@ -82,28 +80,22 @@ public class SignController {
      * @return
      */
     @RequestMapping("/getStudentSignStatistics")
-    public Result getStudentSignStatistics(@RequestParam(name = "studentId") Long studentId,
+    public Result<Map<String,Integer>> getStudentSignStatistics(@RequestParam(name = "studentId") Long studentId,
                                             @RequestParam(name="courseId") Long courseId){
-       Map<String,Integer> resultMap = this.signService.getLateNumberByStudentAndCourse(studentId,courseId);
-        Result result = new Result("OK");
-        result.resultMap.put("resultMap",resultMap);
-        return result;
+        Map<String,Integer> resultMap = this.signService.getLateNumberByStudentAndCourse(studentId,courseId);
+        return ResultUtil.success(resultMap);
     }
 
-    public Result getLateNumberByCourse(@RequestParam(name = "courseId") Long courseId){
+    public Result<Integer> getLateNumberByCourse(@RequestParam(name = "courseId") Long courseId){
        int number = this.signService.getLateNumberByCourse(courseId);
-       Result result = new Result("OK");
-       result.resultMap.put("number",number);
-       return result;
+       return ResultUtil.success(number);
     }
 
     @RequestMapping("/getSignByStudent")
-    public Result getSignByStudent(@RequestParam(name = "teacherId") Long teacherId,
+    public Result<Sign> getSignByStudent(@RequestParam(name = "teacherId") Long teacherId,
                                    @RequestParam(name = "clazzId") Long clazzId){
         Sign sign = this.signService.getSignByTeacherAndClazz(teacherId,clazzId);
-        Result result = new Result("OK");
-        result.resultMap.put("sign",sign);
-        return result;
+       return ResultUtil.success(sign);
     }
 
 

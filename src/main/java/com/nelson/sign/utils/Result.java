@@ -1,25 +1,38 @@
 package com.nelson.sign.utils;
 
-import java.util.HashMap;
-import java.util.Map;
+public class Result<T> {
 
-public class Result {
+    /** 错误码. */
+    private Integer code;
 
-    public String status;
+    /** 提示信息. */
+    private String msg;
 
-    public Map<String,Object> resultMap = new HashMap<String,Object>();
+    /** 具体的内容. */
+    private T data;
 
-    public Result() {
+    public Integer getCode() {
+        return code;
     }
 
-    public Result(String status) {
-        this.status = status;
+    public void setCode(Integer code) {
+        this.code = code;
     }
 
-    public Result(String status, Map<String, Object> resultMap) {
-        this.status = status;
-        this.resultMap = resultMap;
+    public String getMsg() {
+        return msg;
     }
 
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
 
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
 }
+
