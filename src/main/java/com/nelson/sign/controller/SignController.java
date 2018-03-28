@@ -1,5 +1,6 @@
 package com.nelson.sign.controller;
 
+import com.nelson.sign.Repository.SignRepository;
 import com.nelson.sign.entity.Course;
 import com.nelson.sign.entity.Sign;
 import com.nelson.sign.enums.ResultEnum;
@@ -9,6 +10,7 @@ import com.nelson.sign.service.SignService;
 import com.nelson.sign.utils.Result;
 import com.nelson.sign.utils.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,10 +27,25 @@ public class SignController {
     private SignService signService;
 
     @Autowired
+    private SignRepository signRepository;
+
+    @Autowired
     private CourseService courseService;
 
+    /**
+     * 学生签到
+     * @param sign
+     * @param request
+     * @return
+     */
     @RequestMapping("/sign")
     public Result<Sign> sign(@Valid Sign sign, HttpServletRequest request){
+
+        //判断有没有签到
+       if(this.signRepository.getSignByCourseTimeAndStudent(sign.getCourseTime(),sign.getStudent())!=null){
+           throw  new SignException(ResultEnum.ERR_HAS_SIGNED);
+       }
+
         //获取客户端IP
         String ip = request.getHeader("x-forwarded-for");
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
@@ -90,9 +107,21 @@ public class SignController {
         return ResultUtil.success(resultMap);
     }
 
-    public Result<Integer> getLateNumberByCourse(@RequestParam(name = "courseId") Long courseId){
-       int number = this.signService.getLateNumberByCourse(courseId);
-       return ResultUtil.success(number);
+
+    /**
+     * 该课程下所有学生在到课情况列表
+     * 支持查询 ： 学生姓名  学号
+     * @param courseTimeId
+     * @param keyword
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping("/getStudentSignStatisticsByCourse")
+    public Result<Page<Sign>> getStudentSignStatisticsByCourse(@RequestParam(name = "courseTimeId") Long courseTimeId,String keyword,Integer pageIndex,Integer pageSize){
+//       Page<Sign> pages = this.signService.findBookCriteria(pageIndex,pageSize,keyword);
+        Page<Sign> pages = this.signService.getStudentSignStatisticsByCourse(courseTimeId,keyword,pageIndex,pageSize);
+       return ResultUtil.success(pages);
     }
 
     @RequestMapping("/getSignByStudent")

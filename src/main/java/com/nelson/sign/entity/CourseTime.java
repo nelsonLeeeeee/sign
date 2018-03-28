@@ -10,7 +10,7 @@ public class CourseTime {
     private Long id;
 
     @JoinColumn(name = "course_id",nullable = false)
-    @OneToOne
+    @ManyToOne
     private Course course;
 
     @Column(name = "start_time",nullable = false)

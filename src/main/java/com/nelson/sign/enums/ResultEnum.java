@@ -5,8 +5,8 @@ public enum ResultEnum {
     SUCCESS(200, "成功"),
     ERR_COUNT_PASSWORD(101, "账号或密码错误"),
     ERR_SIGN_EARLY(102, "无法签到,请在上课前30分钟内签到"),
-    ERR_SIGN_LATE(103,"由于您迟到时间过长,无法签到")
-
+    ERR_SIGN_LATE(103,"由于您迟到时间过长,无法签到"),
+    ERR_HAS_SIGNED(104,"无法重复签到")
     ;
 
     private Integer code;

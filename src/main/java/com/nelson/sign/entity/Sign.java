@@ -1,9 +1,12 @@
 package com.nelson.sign.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-public class Sign {
+public class Sign implements Serializable{
+
+
     @Id
     @GeneratedValue
     private Long signId;
@@ -26,7 +29,7 @@ public class Sign {
     private Teacher teacher;
 
     @JoinColumn(name = "courseTime_id",nullable = false)
-    @OneToOne
+    @ManyToOne
     private CourseTime courseTime;
 
 

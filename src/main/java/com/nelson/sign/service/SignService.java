@@ -1,6 +1,7 @@
 package com.nelson.sign.service;
 
 import com.nelson.sign.entity.Sign;
+import org.springframework.data.domain.Page;
 
 import java.util.Map;
 
@@ -15,11 +16,11 @@ public interface SignService {
 
     long checkSignStatus(Long id,Long signTime);
 
-    int getLateNumber(Long studentId,Long courseId);
-
     Map<String, Integer> getLateNumberByStudentAndCourse(Long studentId, Long courseId);
 
     Sign getSignByTeacherAndClazz(Long teacherId, Long clazzId);
 
-    int getLateNumberByCourse(Long courseId);
+    Page<Sign> getStudentSignStatisticsByCourse(Long courseId, String keyword, Integer pageIndex, Integer pageSize);
+
+//    Page<Sign> findBookCriteria(Integer page, Integer size,  String keyword);
 }

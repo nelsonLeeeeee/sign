@@ -28,8 +28,8 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Page<Student> findStudent(Integer pageIndex, Integer pageSize) {
-        Sort sort = new Sort(Sort.Direction.DESC,"student_id");
+        Sort sort = new Sort(Sort.Direction.DESC,"studentId");
         Pageable pageable = PageRequest.of(pageIndex,pageSize,sort);
-        return null;
+        return this.studentRepository.findAll(pageable);
     }
 }
