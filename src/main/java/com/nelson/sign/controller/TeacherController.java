@@ -4,6 +4,7 @@ import com.nelson.sign.Repository.TeacherRepository;
 import com.nelson.sign.entity.Teacher;
 import com.nelson.sign.service.TeacherService;
 import com.nelson.sign.utils.Result;
+import com.nelson.sign.utils.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,11 +23,9 @@ public class TeacherController {
     private TeacherRepository teacherRepository;
 
     @RequestMapping("/addTeacher")
-    public Result addTeacher(@Valid Teacher teacher){
+    public Result<Teacher> addTeacher(@Valid Teacher teacher){
         teacher = this.teacherRepository.saveAndFlush(teacher);
-        Result result = new Result("OK");
-        result.resultMap.put("teacher",teacher);
-        return result;
+        return ResultUtil.success(teacher);
     }
 
 }
